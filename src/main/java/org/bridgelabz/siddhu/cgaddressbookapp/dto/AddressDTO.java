@@ -7,17 +7,15 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+
 @Data
 @NoArgsConstructor
 public class AddressDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
 
-    String city;
-    Long zipCode;
-    String country;
+
+    private String city;
+    private Long zipCode;
+    private String country;
 
     public AddressDTO(String city,Long zipCode,String country){
         this.city = city;
