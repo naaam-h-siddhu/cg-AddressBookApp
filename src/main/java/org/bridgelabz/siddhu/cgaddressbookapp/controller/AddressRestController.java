@@ -1,39 +1,61 @@
 package org.bridgelabz.siddhu.cgaddressbookapp.controller;
 
+import org.bridgelabz.siddhu.cgaddressbookapp.dto.AddressDTO;
+import org.bridgelabz.siddhu.cgaddressbookapp.repository.AddressRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/address")
 public class AddressRestController {
 
+    @Autowired
+    AddressRepository addressRepository;
+
     // get all the addresses
     @GetMapping()
-    public String getAddresses(){
-        return "List of Address";
+    public List<AddressDTO> getAddresses(){
+        return addressRepository.findAll();
     }
 
     //get the address by id
     @GetMapping("{id}")
-    public String getAddress(@PathVariable Long id){
-        return "Details of address id = "+id;
+    public AddressDTO getAddress(@PathVariable Long id){
+        return addressRepository.findById(id).get();
     }
 
     // add the address
-    @PostMapping("/add/{id}")
-    public String addAddress(@PathVariable Long id){
-        return "Successfully added the address of id "+id;
+    @PostMapping("/add")
+    public AddressDTO addAddress(@RequestBody AddressDTO addressDTO ){
+        return addressRepository.save(addressDTO);
     }
 
     //update the adddress
     @PutMapping("/update/{id}")
-    public String updateAddress(@PathVariable Long id){
-        return "Successfully update the address of id "+id;
+    public AddressDTO updateAddress(@PathVariable Long id, @RequestBody AddressDTO addressDTO){
+       AddressDTO tempAddress = addressRepository.findById(id).orElse(null);
+       if(tempAddress != null){
+           tempAddress.setCity(addressDTO.getCity());
+           tempAddress.setZipCode(addressDTO.getZipCode());
+           tempAddress.setCountry(addressDTO.getCountry());
+           return addressRepository.save(tempAddress);
+       }
+       return null;
     }
 
     // delete the address
     @DeleteMapping("/delete/{id}")
     public String deleteAddress(@PathVariable Long id){
-        return "Successfully deleted the address of id "+id;
+        AddressDTO addressDTO = addressRepository.findById(id).orElse(null);
+        if(addressDTO != null){
+            addressRepository.delete(addressDTO);
+            return "Successfully delete address with id "+id;
+        }
+        return "Address with id "+id+" does not exist!";
+
     }
 
 
